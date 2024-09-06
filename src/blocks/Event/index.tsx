@@ -1,6 +1,5 @@
 import { Events } from "@app/constants";
 import { FlagIcon } from "@app/assets";
-import { Icon } from "@app/components";
 
 interface EventBlockProps {
   eventType: Events;

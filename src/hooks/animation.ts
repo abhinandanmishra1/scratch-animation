@@ -8,9 +8,10 @@ interface UseAnimationsProps {
   play: boolean;
   dragged: boolean;
 }
+
 const waitFor = (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+}
 
 export const useAnimations = ({ sprite, play, dragged}: UseAnimationsProps) => {
   const {
@@ -65,8 +66,6 @@ export const useAnimations = ({ sprite, play, dragged}: UseAnimationsProps) => {
         }));
         break;
       case Actions.Repeat:
-        // Here you would need to define how many times to repeat
-        console.log(repeatCount);
         if (repeatCount === MAX_REPEAT) break;
 
         if (repeatCount < MAX_REPEAT) {

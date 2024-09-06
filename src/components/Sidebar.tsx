@@ -1,9 +1,8 @@
 import { Actions, Events } from "@app/constants";
 
 import { DragEvent } from "react";
-import { DraggableItem } from "@app/blocks/DraggableItem";
+import { DraggableItem } from "@app/blocks";
 import { FlagIcon } from "@app/assets";
-import { Icon } from "./Icon";
 import { useScratchStore } from "@app/store";
 
 export function Sidebar() {

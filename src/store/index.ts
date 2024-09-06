@@ -2,7 +2,7 @@ import { Actions, Events } from "@app/constants";
 
 import { create } from "zustand";
 import { createRef } from "react";
-import { getRandomPositionForNewSprite } from "@app/utils/animation";
+import { getRandomPositionForNewSprite } from "@app/utils";
 
 type Item = Events | Actions;
 

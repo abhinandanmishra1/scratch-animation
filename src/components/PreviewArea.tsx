@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { CatSprite } from "./CatSprite";
 import { CgCloseO } from "react-icons/cg";
 import { FlagIcon } from "@app/assets";
-import { getRandomPositionForNewSprite } from "@app/utils/animation";
-import { useAnimations } from "@app/hooks/animation";
+import { getRandomPositionForNewSprite } from "@app/utils";
+import { useAnimations } from "@app/hooks";
 import { useScratchStore } from "@app/store";
 
 interface AnimateWrapperProps {

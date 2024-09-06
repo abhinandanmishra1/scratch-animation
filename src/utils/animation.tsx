@@ -25,7 +25,12 @@ export const getRandomPositionForNewSprite = (
     top = 0,
     right = 0,
     bottom = 0,
-  } = ref.current?.getBoundingClientRect() as any;
+  } = ref.current?.getBoundingClientRect() as {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  };
   // set a position of new sprite at any random position greater inside ref object
   const randomX = left + 100 + Math.floor(Math.random() * (right - left - 200));
   const randomY = top + 100 + Math.floor(Math.random() * (bottom - top - 200));
