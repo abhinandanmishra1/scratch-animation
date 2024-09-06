@@ -1,23 +1,75 @@
-import { useEffect, useState } from "react";
+import { Actions, Events } from "@app/constants";
+import { useCallback, useEffect, useState } from "react";
 
-import { Actions } from "@app/constants";
 import { useScratchStore } from "@app/store";
 
 interface UseAnimationsProps {
   sprite: string;
-  play: boolean;
   dragged: boolean;
 }
 
-const waitFor = (ms: number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
+export const useAnimations = ({
+  sprite,
+  dragged,
+}: UseAnimationsProps) => {
+  const { spriteItemList, spritesPositions, effectiveEvents,
+    positionUpdateAllowed,
+    togglePositionUpdateAllowed,
+    dispatchOnClickEvent,
+    completeOnlickEvent,
+    completeStartEvent,
+    setSpritesPosition,
+    detectCollisions,
+    cancelAllEvents,
+    handleCollision
+   } = useScratchStore(
+    (state) => state
+  );
+  const [TriggerEvent, setTriggerEvent] = useState<Events>();
+  const [animations, setAnimations] = useState<Actions[]>([]);
 
-export const useAnimations = ({ sprite, play, dragged}: UseAnimationsProps) => {
-  const {
-    spriteItemList,
-    spritesPositions,
-  } = useScratchStore((state) => state);
+  console.log({
+    spriteItemList
+  })
+  // const animations = useMemo(() => {
+  //   return (spriteItemList[sprite]?.slice(1) || []) as Actions[]
+  // }, [spriteItemList[sprite]]);
+
+  useEffect(() => {
+    console.log({
+      [sprite]: spriteItemList[sprite]
+    })
+    const TriggerEvent = spriteItemList[sprite]?.[0] as Events;
+    setTriggerEvent(TriggerEvent);
+    const animations = spriteItemList[sprite]?.slice(1) as Actions[];
+    setAnimations(animations);
+  }, [spriteItemList, sprite])
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const completeEvent = useCallback(() => {
+    if(TriggerEvent === Events.OnClick) {
+      completeOnlickEvent(sprite);
+    }else if(TriggerEvent === Events.OnStart) {
+      completeStartEvent(sprite);
+    }
+  }, [completeOnlickEvent, completeStartEvent, TriggerEvent]);
+
+  const togglePlayingOnClick = useCallback(() => {
+    if(TriggerEvent === Events.OnClick) {
+      dispatchOnClickEvent(sprite);
+    }
+  }, [TriggerEvent, dispatchOnClickEvent, sprite]);
+
+  useEffect(() => {
+    if(TriggerEvent === Events.OnClick && effectiveEvents.onClick.includes(sprite)) {
+      setIsPlaying(true);
+    }else if(TriggerEvent === Events.OnStart && effectiveEvents.onStart.includes(sprite)) {
+      setIsPlaying(true);
+    }else {
+      setIsPlaying(false);
+    }
+  }, [TriggerEvent, effectiveEvents]);
 
   const [currentPosition, setCurrentPosition] = useState({
     x: spritesPositions[sprite].x,
@@ -29,62 +81,92 @@ export const useAnimations = ({ sprite, play, dragged}: UseAnimationsProps) => {
     if (dragged) {
       setCurrentPosition(spritesPositions[sprite]);
     }
-  }, [dragged]);
+  }, [dragged, spritesPositions, sprite]);
 
-  const [runAllowed, setRunAllowed] = useState(true);
+  // This runAllowed state is for updating the currentPosition for first time only
 
   useEffect(() => {
-    if (runAllowed) {
-      setRunAllowed(false);
+    if (positionUpdateAllowed) {
+      togglePositionUpdateAllowed();
+      console.log({currentPosition, newPosition: spritesPositions[sprite]})
       setCurrentPosition(spritesPositions[sprite]);
+      console.log("position updated for", sprite)
     }
   }, [spritesPositions[sprite]]);
 
-  const animations = (spriteItemList[sprite]?.slice(1) || []) as Actions[];
-
   const MAX_REPEAT = 5;
-  let repeatCount = 0;
-  const executeAnimation = async (action: Actions) => {
-    switch (action) {
-      case Actions.Move10Steps:
-        setCurrentPosition((current) => ({
-          ...current,
-          x: current.x + 10,
-        }));
-        break;
-      case Actions.Turn15Degrees:
-        setCurrentPosition((current) => ({
-          ...current,
-          angle: current.angle + 15,
-        }));
-        break;
-      case Actions.GotoXY:
-        setCurrentPosition((current) => ({
-          ...current,
-          x: 100,
-          y: 200,
-        }));
-        break;
-      case Actions.Repeat:
-        if (repeatCount === MAX_REPEAT) break;
+  const [executedActions, setExecutedActions]  = useState<Actions[]>([]);
+  
+  const executeAnimation = useCallback(
+    async (action: Actions) => {
+      switch (action) {
+        case Actions.Move10Steps:
+          setCurrentPosition((current) => ({
+            ...current,
+            x: current.x + 10,
+          }));
+          break;
+        case Actions.Turn15Degrees:
+          setCurrentPosition((current) => ({
+            ...current,
+            angle: current.angle + 15,
+          }));
+          break;
+        case Actions.GotoXY:
+          setCurrentPosition((current) => ({
+            ...current,
+            x: 100,
+            y: 200,
+          }));
+          break;
+        case Actions.Repeat:
+          for(let count = 0; count < MAX_REPEAT; count++) {
+            for (const executedAction of executedActions) {
+              if (!isPlaying) return;
+              executeAnimation(executedAction); // Ensure to wait for each repeated action
+            }
+          }
+          
+          setExecutedActions([]);  // clearing the executed actions
+          break;
+        default:
+          break;
+      }
 
-        if (repeatCount < MAX_REPEAT) {
-          repeatCount++;
+      if(action !== Actions.Repeat) {
+        setExecutedActions(executedActions => [...executedActions, action]);
+        try {
+          const {spriteA, spriteB} = await detectCollisions();
+          if (spriteA === sprite) {
+            setCurrentPosition(currentPosition => (
+              { ...currentPosition, x: currentPosition.x - 100 }
+            ))
+            // cancelAllEvents();
+            // completeEvent();
+            if(spriteB)
+            handleCollision(spriteA, spriteB);
+            // setSpritesPosition(sprite, currentPosition);
+            return true;
+          }
+          
+          return false; // collision doesn't happened
+        }catch(err) {
+          console.error(err);
+          alert("error happened")
         }
-        for (const animation of animations) {
-          if (!play) return;
-          await waitFor(500); // Wait for 500 ms
-          executeAnimation(animation); // Ensure to wait for each repeated action
-        }
-        break;
-      default:
-        break;
-    }
-  };
+      }
+
+      return false; // no collision
+    },
+    [animations, currentPosition, isPlaying, handleCollision]
+  );
 
   return {
     executeAnimation,
     animations,
-    currentPosition
-  }
+    currentPosition,
+    isPlaying,
+    togglePlayingOnClick,
+    completeEvent
+  };
 };

@@ -2,6 +2,7 @@ export enum Events {
   OnClick = "onClick",
   OnCollision = "onCollision",
   OnStart = "onStart",
+  None = "None"
 }
 
 export enum Actions {

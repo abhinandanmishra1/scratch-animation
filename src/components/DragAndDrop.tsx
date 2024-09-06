@@ -14,10 +14,8 @@ const DragDropList = () => {
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     // get id from data
-    console.log(e);
     const id = e.dataTransfer?.getData("id") as Events | Actions;
 
-    console.log(id);
     if (!id) return;
 
     addItem(selectedSprite, id);
@@ -59,8 +57,8 @@ export const DragDropListView = () => {
   const { selectedSprite } = useScratchStore();
   return (
     <div className="w-full">
-      <h1 className="text-2xl font-bold text-center mt-8">
-        Drag and Drop List for {selectedSprite}
+      <h1 className="text-2xl text-center mt-8">
+        Events and Actions List for <b className="text-green-700">{selectedSprite}</b>
       </h1>
       <DragDropList />
     </div>

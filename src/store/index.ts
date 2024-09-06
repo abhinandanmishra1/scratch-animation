@@ -17,17 +17,36 @@ type SpritesPositions = Record<string, SpritePositionType>;
 type Store = {
   sprites: string[];
   ref: React.RefObject<HTMLDivElement>;
+  eventToSprites: {
+    [key in Events]: string[];
+  };
+  effectiveEvents: {
+    [key in Events]: string[];
+  };
+  positionUpdateAllowed: boolean;
+  togglePositionUpdateAllowed: () => void;
+  dispatchStartEvent: () => void;
+  cancelStartEvent: () => void;
+  dispatchOnClickEvent: (sprite: string) => void;
+  completeOnlickEvent: (sprite: string) => void;
+  completeStartEvent: (sprite: string) => void;
+  cancelAllEvents: () => void;
   addSprite: () => void;
   spritesPositions: SpritesPositions;
   setSpritesPosition: (
     spriteName: string,
-    position: SpritePositionType
+    position: Partial<SpritePositionType>
   ) => void;
   selectedSprite: string;
   setSelectedSprite: (sprite: string) => void;
   spriteItemList: SpriteItemList;
   addItem: (spriteName: string, item: Item) => void;
   removeItem: (spriteName: string, itemIndex: number) => void;
+  detectCollisions: () => Promise<{
+    spriteA: string | null,
+    spriteB: string |  null
+  }>;
+  handleCollision: (spriteA: string, spriteB: string) => void;
 };
 
 export const useScratchStore = create<Store>()((set) => ({
@@ -36,12 +55,91 @@ export const useScratchStore = create<Store>()((set) => ({
   spritesPositions: {
     "sprite-1": { x: 0, y: 0, angle: 0 },
   },
-  setSpritesPosition: (spriteName: string, position: SpritePositionType) => {
-    console.log(spriteName, position);
+  positionUpdateAllowed: true,
+  togglePositionUpdateAllowed: () =>
+    set((state) => ({ positionUpdateAllowed: !state.positionUpdateAllowed })),
+  eventToSprites: {
+    [Events.OnClick]: [],
+    [Events.OnStart]: [],
+    [Events.OnCollision]: [],
+    [Events.None]: [],
+  },
+  effectiveEvents: {
+    [Events.OnClick]: [],
+    [Events.OnStart]: [],
+    [Events.OnCollision]: [],
+    [Events.None]: [],
+  },
+  dispatchStartEvent: () => {
+    set({
+      effectiveEvents: {
+        ...useScratchStore.getState().effectiveEvents,
+        [Events.OnStart]: useScratchStore.getState().eventToSprites.onStart,
+      },
+    });
+  },
+  completeStartEvent: (sprite: string) => {
+    set({
+      effectiveEvents: {
+        ...useScratchStore.getState().effectiveEvents,
+        [Events.OnStart]: useScratchStore
+          .getState()
+          .effectiveEvents.onStart.filter((s:string) => s !== sprite),
+      },
+    });
+  },
+  cancelStartEvent: () => {
+    set({
+      effectiveEvents: {
+        ...useScratchStore.getState().effectiveEvents,
+        [Events.OnStart]: [],
+      },
+    });
+  },
+  dispatchOnClickEvent: (sprite: string) => {
+    set({
+      effectiveEvents: {
+        ...useScratchStore.getState().effectiveEvents,
+        [Events.OnClick]: [
+          ...useScratchStore
+            .getState()
+            .effectiveEvents.onClick.filter((s: string) => s !== sprite),
+          sprite,
+        ],
+      },
+    });
+  },
+  cancelAllEvents: () => {
+    set({
+      effectiveEvents: {
+        [Events.OnClick]: [],
+        [Events.OnStart]: [],
+        [Events.OnCollision]: [],
+        [Events.None]: [],
+      }
+    })
+  },
+  completeOnlickEvent: (sprite: string) => {
+    set({
+      effectiveEvents: {
+        ...useScratchStore.getState().effectiveEvents,
+        [Events.OnClick]: useScratchStore
+          .getState()
+          .effectiveEvents.onClick.filter((s:string) => s !== sprite),
+      },
+    });
+  },
+  setSpritesPosition: (
+    spriteName: string,
+    position: Partial<SpritePositionType>
+  ) => {
     set((state) => ({
       spritesPositions: {
         ...state.spritesPositions,
-        [spriteName]: position,
+        [spriteName]: {
+          ...state.spritesPositions[spriteName],
+          ...position,
+        },
       },
     }));
   },
@@ -73,6 +171,10 @@ export const useScratchStore = create<Store>()((set) => ({
               ...state.spriteItemList,
               [spriteName]: [item],
             },
+            eventToSprites: {
+              ...state.eventToSprites,
+              [item]: [...state.eventToSprites[item], spriteName],
+            },
           };
         } else {
           alert("First element should be an Event item not an action item");
@@ -89,19 +191,11 @@ export const useScratchStore = create<Store>()((set) => ({
         return state;
       }
 
-      console.log(state.spriteItemList[spriteName])
-      const newList = [...state.spriteItemList[spriteName], item];
-
-      console.log(newList)
       const newspriteItemList = {
         ...state.spriteItemList,
-        [spriteName]: [...(state.spriteItemList[spriteName]), item],
+        [spriteName]: [...state.spriteItemList[spriteName], item],
       };
 
-
-      console.log({
-        spriteItemList: newspriteItemList,
-      })
       return {
         spriteItemList: newspriteItemList,
       };
@@ -120,4 +214,100 @@ export const useScratchStore = create<Store>()((set) => ({
       };
     });
   },
+  detectCollisions: async () => {
+    const { spritesPositions, sprites } =
+      useScratchStore.getState() as Store;
+
+    // Detect collisions between all sprites
+    for (let i = 0; i < sprites.length; i++) {
+      for (let j = i + 1; j < sprites.length; j++) {
+        const spriteA = sprites[i];
+        const spriteB = sprites[j];
+
+        const posA = spritesPositions[spriteA];
+        const posB = spritesPositions[spriteB];
+
+        // Basic bounding box collision detection
+        if (
+          Math.abs(posA.x - posB.x) < 50 && // Assuming 50 as sprite width
+          Math.abs(posA.y - posB.y) < 50 // Assuming 50 as sprite height
+        ) {
+          return {
+            spriteA,
+            spriteB
+          };
+        }
+      }
+    }
+
+    return {
+      spriteA: null,
+      spriteB: null
+    };
+  },
+    
+  //   set((state) => {
+  //     const spriteAItems = state.spriteItemList[spriteA] || [];
+  //     const spriteBItems = state.spriteItemList[spriteB] || [];
+
+  //     const SpriteATriggerEvent = (spriteAItems?.[0] || Events.None) as Events;
+  //     const SpriteBTriggerEvent = (spriteBItems?.[0] || Events.None) as Events;
+
+  //     const spriteItemList = {
+  //       ...state.spriteItemList,
+  //       [spriteA]: spriteBItems,
+  //       [spriteB]: spriteAItems,
+  //     };
+
+  //     // we need to remove the sprite from it's original effective events and add to new swapped ones
+
+  //     // Update the effective events
+  //     console.log("before");
+  //     console.log(state.effectiveEvents);
+  //     // const effectiveEvents = {
+  //     //   ...state.effectiveEvents,
+  //     //   [SpriteATriggerEvent]: [
+  //     //     ...(state.effectiveEvents[SpriteATriggerEvent]?.filter(
+  //     //       (s) => s !== spriteA
+  //     //     ) || []),
+  //     //     spriteB,
+  //     //   ],
+  //     //   [SpriteBTriggerEvent]: [
+  //     //     ...(state.effectiveEvents[SpriteBTriggerEvent]?.filter(
+  //     //       (s) => s !== spriteB
+  //     //     ) || []),
+  //     //     spriteA,
+  //     //   ],
+  //     // };
+
+
+  //     console.log({
+  //       spriteItemList,
+  //       // effectiveEvents,
+  //     })
+  //     // after handling the collisons the position should be changed
+  //     // otherwise it would make the colliison forevr
+  //     return {
+  //       spriteItemList,
+  //       // effectiveEvents,
+  //     };
+  //   });
+  // },
+  handleCollision: (spriteA: string, spriteB: string) => {
+    set((state) => {
+      const SpriteATriggerEvent = (state.spriteItemList[spriteA]?.[0] || Events.OnStart) as Events;
+      const SpriteBTriggerEvent = (state.spriteItemList[spriteB]?.[0] || Events.OnStart) as Events;
+      const spriteAItems = state.spriteItemList[spriteA]?.slice(1) || [];
+      const spriteBItems = state.spriteItemList[spriteB]?.slice(1) || [];
+      
+      return {
+        spriteItemList: {
+          ...state.spriteItemList,
+          [spriteA]: [SpriteATriggerEvent, ...spriteBItems],
+          [spriteB]: [SpriteBTriggerEvent, ...spriteAItems],
+        }
+      };
+    });
+  },
+  
 }));
