@@ -1,33 +1,37 @@
 import { Actions, Events } from "@app/constants";
+import { useAppDispatch, useAppSelector } from "@app/hooks";
 
 import { DragEvent } from "react";
-import { useScratchStore } from "@app/store";
+import {
+  addItem,
+} from "@app/store/slice";
 
 const DragDropList = () => {
+  const dispatch = useAppDispatch();
+
   const {
     spriteItemList,
     selectedSprite,
-    addItem,
-  } = useScratchStore(state => state);
+  } = useAppSelector(state => state.global);
 
   const spriteItems = spriteItemList[selectedSprite] || [];
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    // get id from data
     const id = e.dataTransfer?.getData("id") as Events | Actions;
 
     if (!id) return;
 
-    addItem(selectedSprite, id);
+    dispatch(addItem({ spriteName: selectedSprite, item: id }));
   };
 
-  const handleDragStart = (e: DragEvent, index: number) => {
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, index: number) => {
     e.dataTransfer.setData("index", index.toString());
     e.dataTransfer.setData("listName", selectedSprite);
+    e.dataTransfer.setData("id", spriteItems[index]); // Set the item ID here
   };
 
   return (
-    <div className="w-1/2 mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
+    <div className="w-2/3 mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
       {spriteItems.map((animation, index) => (
         <div
           key={index}
@@ -36,7 +40,7 @@ const DragDropList = () => {
             animation === Actions.Repeat ||
             animation === Actions.Move10Steps ||
             animation === Actions.Turn15Degrees ||
-            spriteItems.length === 1   // this will make to remove the only remaining event item
+            spriteItems.length === 1
           }
           onDragStart={(e) => handleDragStart(e, index)}
           className="p-2 border rounded shadow-md cursor-move"
@@ -54,7 +58,8 @@ const DragDropList = () => {
 };
 
 export const DragDropListView = () => {
-  const { selectedSprite } = useScratchStore();
+  const selectedSprite = useAppSelector(state => state.global.selectedSprite)
+
   return (
     <div className="w-full">
       <h1 className="text-2xl text-center mt-8">

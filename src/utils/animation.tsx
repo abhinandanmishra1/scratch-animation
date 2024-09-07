@@ -20,6 +20,7 @@ export const AnimationText = (animation: Events | Actions) => {
 export const getRandomPositionForNewSprite = (
   ref: React.RefObject<HTMLDivElement>
 ) => {
+  if (!ref.current) return { x: 0, y: 0, angle: 0 };
   const {
     left = 0,
     top = 0,
