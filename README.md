@@ -33,3 +33,26 @@ A Scratch-inspired application built with React, Vite, TypeScript, and Tailwind 
 - [x] Integrate Zustand and Redux Toolkit for state management.
 - [x] Style the application using Tailwind CSS.
 - [x] Configure the project with React, Vite, TypeScript, and Tailwind CSS.
+
+## Visuals
+### Homepage
+<img width="1470" alt="Screenshot 2024-09-07 at 4 28 32 PM" src="https://github.com/user-attachments/assets/f148104f-a832-4b2b-9b64-ee81b28c1b49">
+<br/>
+
+### Instructions Modal
+<img width="1470" alt="Screenshot 2024-09-07 at 4 28 48 PM" src="https://github.com/user-attachments/assets/cd3ec563-1c3c-456c-abd9-7094952a200a">
+<br />
+
+### Application View
+<img width="1470" alt="Screenshot 2024-09-07 at 4 28 58 PM" src="https://github.com/user-attachments/assets/68f88891-98dc-4d32-9cc0-b92a555feea1">
+
+### Drag and drop motions, with repeat control
+https://github.com/user-attachments/assets/4d6db670-58cd-4b26-908d-6ba189c84a2f
+
+### Adding multiple sprites and animating them
+https://github.com/user-attachments/assets/a9e8ee38-001a-45d7-9eae-70c723f5e0f0
+
+### Swapping the motions on collision
+https://github.com/user-attachments/assets/b6936463-a014-4a56-abc3-f6ac5833fa98
+
+
