@@ -4,9 +4,9 @@ export const AnimationText = (animation: Events | Actions) => {
   switch (animation) {
     case Events.OnClick:
       return "When this sprite clicked";
-    case Actions.Move10Steps:
+    case Actions.MoveXStepsForward:
       return "Move 10 steps";
-    case Actions.Turn15Degrees:
+    case Actions.TurnXDegreesClockwise:
       return "Turn 15 degrees";
     case Events.OnStart:
       return <div> When <span></span> is clicked </div>;

@@ -27,22 +27,31 @@ export function Sidebar() {
       className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-2 border-r border-gray-200"
     >
       <div className="font-bold"> {"Events"} </div>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("id", Events.OnStart)} type="event">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Events.OnStart)} type="event">
         {"When "}
         <FlagIcon size={16} fill="green" />
         {"clicked"}
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("id", Events.OnClick)} type="event">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Events.OnClick)} type="event">
         {"When this sprite clicked"}
       </DraggableItem>
       <div className="font-bold"> {"Motion"} </div>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("id", Actions.Move10Steps)} type="motion">
-        {"Move 10 steps"}
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsForward)} type="motion">
+        Move X steps forward
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("id", Actions.Turn15Degrees)} type="motion">
-        {"Turn 15 degrees"}
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsBackward)} type="motion">
+        Move X steps backward
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("id", Actions.Repeat)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesClockwise)} type="motion">
+        Turn X degrees clockwise
+      </DraggableItem>
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesAntiClockwise)} type="motion">
+        Turn X degrees anti-clockwise
+      </DraggableItem>
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.GotoXY)} type="motion">
+        Go to position X and Y
+      </DraggableItem>
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.RepeatXTimes)} type="motion">
         {"Repeat"}
       </DraggableItem>
     </div>

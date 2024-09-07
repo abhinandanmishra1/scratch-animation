@@ -6,8 +6,10 @@ export enum Events {
 }
 
 export enum Actions {
-  Move10Steps = "Move 10 steps",
-  Turn15Degrees = "Turn 15 degrees",
+  MoveXStepsForward = "Move X steps in right direction",
+  MoveXStepsBackward = "Move X steps in left direction",
+  TurnXDegreesClockwise = "Turn X degrees in clockwise direction",
+  TurnXDegreesAntiClockwise = "Turn X degrees in anti-clockwise direction",
   GotoXY = "Goto x:___ y:____",
-  Repeat = "Repeat",
+  RepeatXTimes = "Repeat",
 }

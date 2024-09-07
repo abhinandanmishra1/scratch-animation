@@ -11,6 +11,8 @@ import {
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { useCallback, useEffect, useState } from "react";
 
+import { Item } from "@app/types";
+
 interface UseAnimationsProps {
   sprite: string;
   dragged: boolean;
@@ -31,12 +33,12 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
   );
 
   const [TriggerEvent, setTriggerEvent] = useState<Events>();
-  const [animations, setAnimations] = useState<Actions[]>([]);
+  const [animations, setAnimations] = useState<Item[]>([]);
 
   useEffect(() => {
-    const TriggerEvent = spriteItemList[sprite]?.[0] as Events;
+    const TriggerEvent = spriteItemList[sprite]?.[0]?.type as Events;
     setTriggerEvent(TriggerEvent);
-    const animations = spriteItemList[sprite]?.slice(1) as Actions[];
+    const animations = spriteItemList[sprite]?.slice(1) || [];
     setAnimations(animations);
   }, [spriteItemList, sprite]);
 
@@ -110,15 +112,12 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
 
     for (const sprite of sprites) {
       if (sprite === spriteA) continue;
-      const spriteB = sprite; 
+      const spriteB = sprite;
       const posA = spritesPositions[spriteA];
       const posB = spritesPositions[spriteB];
 
       // Basic bounding box collision detection
-      if (
-        Math.abs(posA.x - posB.x) < 50 && 
-        Math.abs(posA.y - posB.y) < 50
-      ) {
+      if (Math.abs(posA.x - posB.x) < 50 && Math.abs(posA.y - posB.y) < 50) {
         return {
           spriteA,
           spriteB,
@@ -129,33 +128,47 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
     return { spriteA, spriteB: null };
   }, [sprite, currentPosition, spritesPositions]);
 
-  const MAX_REPEAT = 5;
-  const [executedActions, setExecutedActions] = useState<Actions[]>([]);
+  const [executedActions, setExecutedActions] = useState<Item[]>([]);
 
   const executeAnimation = useCallback(
-    async (action: Actions) => {
-      switch (action) {
-        case Actions.Move10Steps:
+    async (action: Item) => {
+      const { type, payload } = action;
+      console.log("Executiong action of type ", type, "with payload", payload);
+      switch (type) {
+        case Actions.MoveXStepsForward:
           setCurrentPosition((current) => ({
             ...current,
-            x: current.x + 10,
+            x: current.x + Number(payload?.steps || "10"),
           }));
           break;
-        case Actions.Turn15Degrees:
+        case Actions.MoveXStepsBackward:
           setCurrentPosition((current) => ({
             ...current,
-            angle: current.angle + 15,
+            x: current.x - Number(payload?.steps || "10"),
+          }));
+          break;
+        case Actions.TurnXDegreesClockwise:
+          setCurrentPosition((current) => ({
+            ...current,
+            angle: current.angle + Number(payload?.degrees || "15"),
+          }));
+          break;
+        case Actions.TurnXDegreesAntiClockwise:
+          setCurrentPosition((current) => ({
+            ...current,
+            angle: current.angle - Number(payload?.degrees || "15"),
           }));
           break;
         case Actions.GotoXY:
           setCurrentPosition((current) => ({
             ...current,
-            x: 100,
-            y: 200,
+            x: Number(payload?.x || "750"),
+            y: Number(payload?.y || "50"),
           }));
           break;
-        case Actions.Repeat:
-          for (let count = 0; count < MAX_REPEAT; count++) {
+        case Actions.RepeatXTimes:
+          const times = Number(payload?.times || "1");
+          for (let count = 0; count < times; count++) {
             for (const executedAction of executedActions) {
               if (!isPlaying) return;
               executeAnimation(executedAction);
@@ -167,7 +180,7 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
           break;
       }
 
-      if (action !== Actions.Repeat) {
+      if (type !== Actions.RepeatXTimes) {
         setExecutedActions((executedActions) => [...executedActions, action]);
         try {
           const { spriteA, spriteB } = detectCollisions();

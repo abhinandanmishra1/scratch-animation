@@ -1,52 +1,60 @@
 import { Actions, Events } from "@app/constants";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
 
+import { ActionTypeWrapper } from "./ActionType";
 import { DragEvent } from "react";
-import {
-  addItem,
-} from "@app/store/slice";
+import { addItem } from "@app/store/slice";
 
 const DragDropList = () => {
   const dispatch = useAppDispatch();
 
-  const {
-    spriteItemList,
-    selectedSprite,
-  } = useAppSelector(state => state.global);
+  const { spriteItemList, selectedSprite } = useAppSelector(
+    (state) => state.global
+  );
 
   const spriteItems = spriteItemList[selectedSprite] || [];
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    const id = e.dataTransfer?.getData("id") as Events | Actions;
+    const type = e.dataTransfer?.getData("type") as Events | Actions;
+    const payload = JSON.parse(e.dataTransfer?.getData("payload") || "{}");
+    if (!type) return;
 
-    if (!id) return;
-
-    dispatch(addItem({ spriteName: selectedSprite, item: id }));
+    console.log({
+      type,
+      payload,
+    });
+    dispatch(
+      addItem({
+        spriteName: selectedSprite,
+        item: {
+          type,
+          payload,
+        },
+      })
+    );
   };
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, index: number) => {
     e.dataTransfer.setData("index", index.toString());
     e.dataTransfer.setData("listName", selectedSprite);
-    e.dataTransfer.setData("id", spriteItems[index]); // Set the item ID here
+    e.dataTransfer.setData("id", spriteItems[index].type); // Set the item ID here
   };
 
   return (
     <div className="w-2/3 mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
       {spriteItems.map((animation, index) => (
-        <div
-          key={index}
+        <ActionTypeWrapper
           draggable={
-            animation === Actions.GotoXY ||
-            animation === Actions.Repeat ||
-            animation === Actions.Move10Steps ||
-            animation === Actions.Turn15Degrees ||
+            (animation.type !== Events.OnStart &&
+              animation.type !== Events.OnClick) ||
             spriteItems.length === 1
           }
-          onDragStart={(e) => handleDragStart(e, index)}
-          className="p-2 border rounded shadow-md cursor-move"
-        >
-          {animation}
-        </div>
+          handleDragStart={handleDragStart}
+          key={selectedSprite + animation.type + index.toString()}
+          spriteName={selectedSprite}
+          itemIndex={index}
+          action={animation}
+        />
       ))}
       <div
         onDrop={handleDrop}
@@ -58,12 +66,13 @@ const DragDropList = () => {
 };
 
 export const DragDropListView = () => {
-  const selectedSprite = useAppSelector(state => state.global.selectedSprite)
+  const selectedSprite = useAppSelector((state) => state.global.selectedSprite);
 
   return (
     <div className="w-full">
       <h1 className="text-2xl text-center mt-8">
-        Events and Actions List for <b className="text-green-700">{selectedSprite}</b>
+        Events and Actions List for{" "}
+        <b className="text-green-700">{selectedSprite}</b>
       </h1>
       <DragDropList />
     </div>
