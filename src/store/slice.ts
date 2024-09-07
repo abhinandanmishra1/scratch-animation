@@ -30,7 +30,7 @@ const initialState: GlobalState = {
   ref: createRef<HTMLDivElement>(),
   collisionTime: 0,
   sprites: ['sprite-1'],
-  spritesPositions: { 'sprite-1': { x: 0, y: 0, angle: 0 } },
+  spritesPositions: { 'sprite-1': { x: 1000, y: 100, angle: 0 } },
   positionUpdateAllowed: true,
   eventToSprites: {
     [Events.OnClick]: [],
