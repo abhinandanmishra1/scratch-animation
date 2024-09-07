@@ -79,7 +79,7 @@ export function PreviewArea() {
   return (
     <div
       ref={ref}
-      className="flex-none h-full overflow-y-auto p-2 bg-green-100 w-full"
+      className="flex-none h-full overflow-y-auto p-2 bg-white w-full"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
@@ -92,7 +92,7 @@ export function PreviewArea() {
               const position = getRandomPositionForNewSprite(boundingRect);
               dispatch(addSprite(position));
             }}
-            className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Add Sprite
           </button>

@@ -5,7 +5,10 @@ import { setSpritePosition } from "@app/store";
 
 interface AnimateWrapperProps {
   children: React.ReactNode;
-  handleDragStart: (e: React.DragEvent<HTMLDivElement>, currentAngle: number) => void;
+  handleDragStart: (
+    e: React.DragEvent<HTMLDivElement>,
+    currentAngle: number
+  ) => void;
   sprite: string;
   dragged: boolean;
   highLightSelectedSprite: boolean;
@@ -16,23 +19,34 @@ export const AnimateWrapper = ({
   handleDragStart,
   sprite,
   dragged,
-  highLightSelectedSprite
+  highLightSelectedSprite,
 }: AnimateWrapperProps) => {
   const dispatch = useAppDispatch();
   const selectedSprite = useAppSelector((state) => state.global.selectedSprite);
 
-  const { animations, currentPosition, executeAnimation, isPlaying, togglePlayingOnClick, completeEvent} = useAnimations2({
+  const {
+    animations,
+    currentPosition,
+    executeAnimation,
+    isPlaying,
+    togglePlayingOnClick,
+    completeEvent,
+  } = useAnimations2({
     sprite,
     dragged,
   });
 
   const playAnimations = useCallback(async () => {
+    const waitFor = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     for (const animation of animations) {
       if (!isPlaying) return;
       await executeAnimation(animation);
+      await waitFor(100);
     }
 
-    dispatch(setSpritePosition({ spriteName: sprite, position: currentPosition }));
+    dispatch(
+      setSpritePosition({ spriteName: sprite, position: currentPosition })
+    );
     completeEvent();
   }, [isPlaying, sprite, currentPosition]);
 
@@ -52,11 +66,13 @@ export const AnimateWrapper = ({
         top: currentPosition.y,
         left: currentPosition.x,
         transform: `rotate(${currentPosition.angle}deg)`, // Apply rotation based on current angle
-        transition: "all 0.1s ease", // Smooth transitions
+        transition: "all 0.3s ease", // Smooth transitions
       }}
       key={sprite}
       className={`absolute border p-1 py-2 rounded-md ${
-        selectedSprite === sprite && highLightSelectedSprite ? "border-yellow-400 bg-yellow-100" : "border-transparent"
+        selectedSprite === sprite && highLightSelectedSprite
+          ? "border-yellow-400 bg-yellow-100"
+          : "border-transparent"
       }`}
     >
       {children}

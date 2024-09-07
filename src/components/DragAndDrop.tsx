@@ -37,7 +37,11 @@ const DragDropList = () => {
   };
 
   return (
-    <div className="w-[80%] mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
+    <div
+      className={`w-[80%] mx-auto mt-10 p-4 border rounded shadow-md ${
+        spriteItems.length === 0 ? "bg-yellow-100" : "bg-blue-100"
+      }`}
+    >
       {spriteItems.map((animation, index) => (
         <ActionTypeWrapper
           draggable={
@@ -55,8 +59,16 @@ const DragDropList = () => {
       <div
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
-        className="bg-green-100 w-full p-10"
-      ></div>
+        className={`${
+          spriteItems.length === 0
+            ? "bg-yellow-100 text-yellow-600"
+            : "bg-blue-100 text-blue-600"
+        } w-full p-10 flex justify-center `}
+      >
+        {spriteItems.length === 0 && <p>Drag an event here</p>}
+
+        {spriteItems.length > 0 && <p>Drag a motion here</p>}
+      </div>
     </div>
   );
 };
