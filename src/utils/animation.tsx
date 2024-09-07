@@ -17,25 +17,15 @@ export const AnimationText = (animation: Events | Actions) => {
   }
 };
 
-export const getRandomPositionForNewSprite = (
-  ref: React.RefObject<HTMLDivElement>
-) => {
-  if (!ref.current) return { x: 0, y: 0, angle: 0 };
-  const {
-    left = 0,
-    top = 0,
-    right = 0,
-    bottom = 0,
-  } = ref.current?.getBoundingClientRect() as {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-  };
-  // set a position of new sprite at any random position greater inside ref object
+export const getRandomPositionForNewSprite = ( 
+  rect: { left: number; top: number; right: number; bottom: number }
+) => { 
+  // Destructure the rect object to get the properties
+  const { left = 0, top = 0, right = 0, bottom = 0 } = rect;
+  
+  // Set a random position for the new sprite inside the bounding rect
   const randomX = left + 100 + Math.floor(Math.random() * (right - left - 200));
   const randomY = top + 100 + Math.floor(Math.random() * (bottom - top - 200));
-
-
-  return { x: randomX, y: randomY, angle: 0};
+  
+  return { x: randomX, y: randomY, angle: 0 };
 };

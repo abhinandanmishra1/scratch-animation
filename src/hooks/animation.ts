@@ -79,12 +79,7 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
 
   useEffect(() => {
     if (effectiveEvents.onCollision.length == 2) {
-      console.log("useffect triggered", {
-        sprite,
-        TriggerEvent,
-        collision: effectiveEvents.onCollision,
-      });
-      const [spriteA, spriteB] = effectiveEvents.onCollision || ["1", "2"];
+      const [spriteA, spriteB] = effectiveEvents.onCollision;
       if (sprite === spriteA) {
         setCurrentPosition((currentPosition) => ({
           ...currentPosition,
@@ -113,7 +108,7 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
   const detectCollisions = useCallback(() => {
     const spriteA = sprite;
 
-    for (let sprite of sprites) {
+    for (const sprite of sprites) {
       if (sprite === spriteA) continue;
       const spriteB = sprite; 
       const posA = spritesPositions[spriteA];

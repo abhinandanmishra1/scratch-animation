@@ -1,9 +1,8 @@
 import { Actions, Events } from '@app/constants';
 // src/slices/globalSlice.ts
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { RefObject, createRef } from 'react';
 
-import { getRandomPositionForNewSprite } from '@app/utils';
+import {createRef} from 'react';
 
 type Item = Events | Actions;
 
@@ -56,9 +55,6 @@ const globalSlice = createSlice({
     togglePositionUpdate(state) {
       state.positionUpdateAllowed = !state.positionUpdateAllowed;
     },
-    // updateRef(state, action: PayloadAction<RefObject<HTMLDivElement>>) {
-    //   state.ref.current = action.payload.current;
-    // },
     dispatchStartEvent(state) {
       state.effectiveEvents = {
         ...state.effectiveEvents,
@@ -131,12 +127,16 @@ const globalSlice = createSlice({
         },
       };
     },
-    addSprite(state) {
+    addSprite(state, action: PayloadAction<{
+      x: number;
+      y: number;
+      angle: number;
+    }>) {
       const newSpriteName = `sprite-${state.sprites.length + 1}`;
       state.sprites.push(newSpriteName);
       state.spritesPositions = {
         ...state.spritesPositions,
-        [newSpriteName]: getRandomPositionForNewSprite(state.ref as RefObject<HTMLDivElement>),
+        [newSpriteName]: action.payload,
       }
     },
     setSelectedSprite(state, action: PayloadAction<string>) {
@@ -157,11 +157,8 @@ const globalSlice = createSlice({
 
         return;
       }
-      // the first item should be an event and update the eventToSprites as well
-
-
-
-      // now check that this item shouldn't be an event
+      
+      // checking that this item shouldn't be an event
       if(state.spriteItemList[spriteName].length>0 && (item === Events.OnClick || item === Events.OnStart)) {
         alert("Only first item can be an event.");
         return;
@@ -177,19 +174,11 @@ const globalSlice = createSlice({
     },
     handleCollision(state, action: PayloadAction<{ spriteA: string; spriteB: string }>) {
       const { spriteA, spriteB } = action.payload;
-      console.log("handling collision between", {
-        spriteA,
-        spriteB
-      })
       const SpriteATriggerEvent = (state.spriteItemList[spriteA]?.[0] || Events.OnStart) as Events;
       const SpriteBTriggerEvent = (state.spriteItemList[spriteB]?.[0] || Events.OnStart) as Events;
       const spriteAItems = state.spriteItemList[spriteA]?.slice(1) || [];
       const spriteBItems = state.spriteItemList[spriteB]?.slice(1) || [];
 
-      console.log("before", {
-        spriteA: [SpriteATriggerEvent, ...spriteBItems],
-        spriteB: [SpriteBTriggerEvent, ...spriteAItems],
-      })
       // swapping the subarray starting from index 1
       state.spriteItemList[spriteA] = [SpriteATriggerEvent, ...spriteBItems];
       state.spriteItemList[spriteB] = [SpriteBTriggerEvent, ...spriteAItems];
@@ -198,10 +187,6 @@ const globalSlice = createSlice({
         ...state.effectiveEvents,
         [Events.OnCollision]: [],
       }
-      console.log("after", {
-        spriteA: state.spriteItemList[spriteA],
-        spriteB: state.spriteItemList[spriteB],
-      })
     },
   },
 });

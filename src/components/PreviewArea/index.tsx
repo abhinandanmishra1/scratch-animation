@@ -7,24 +7,24 @@ import {
   setSpritePosition,
 } from "@app/store";
 import { useAppDispatch, useAppSelector } from "@app/hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AnimateWrapper } from "./AnimateWrapper";
 import { CatSprite } from "@app/blocks";
 import { getRandomPositionForNewSprite } from "@app/utils";
+import { useScratchStore } from "@app/store/zustand";
 
 export function PreviewArea() {
   const dispatch = useAppDispatch();
-  const divRef = useRef(null);
-  // const ref = useAppSelector((state) => state.global.ref);
+  const ref = useScratchStore((state) => state.ref);
   const sprites = useAppSelector((state) => state.global.sprites);
   const effectiveEvents = useAppSelector((state) => state.global.effectiveEvents);
 
   useEffect(() => {
-    if (divRef.current) {
-      dispatch(setSpritePosition({ spriteName: "sprite-1", position: getRandomPositionForNewSprite(divRef) }));
+    if (ref.current) {
+      dispatch(setSpritePosition({ spriteName: "sprite-1", position: getRandomPositionForNewSprite(ref.current.getBoundingClientRect()) }));
     }
-  }, [divRef.current, dispatch]);
+  }, [ref, dispatch]);
 
   const [draggedSprite, setDraggedSprite] = useState("");
 
@@ -56,14 +56,19 @@ export function PreviewArea() {
 
   return (
     <div
-      ref={divRef}
+      ref={ref}
       className="flex-none h-full overflow-y-auto p-2 bg-green-100 w-full"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       <div className="flex gap-2 items-center">
         <button
-          onClick={() => dispatch(addSprite())}
+          onClick={() => {
+            if (!ref.current) return;
+            const boundingRect = ref.current.getBoundingClientRect();
+            const position = getRandomPositionForNewSprite(boundingRect);
+            dispatch(addSprite(position))
+          }}
           className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
         >
           Add Sprite
