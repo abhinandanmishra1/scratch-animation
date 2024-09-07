@@ -8,6 +8,7 @@ interface AnimateWrapperProps {
   handleDragStart: (e: React.DragEvent<HTMLDivElement>, currentAngle: number) => void;
   sprite: string;
   dragged: boolean;
+  highLightSelectedSprite: boolean;
 }
 
 export const AnimateWrapper = ({
@@ -15,6 +16,7 @@ export const AnimateWrapper = ({
   handleDragStart,
   sprite,
   dragged,
+  highLightSelectedSprite
 }: AnimateWrapperProps) => {
   const dispatch = useAppDispatch();
   const selectedSprite = useAppSelector((state) => state.global.selectedSprite);
@@ -53,8 +55,8 @@ export const AnimateWrapper = ({
         transition: "all 0.1s ease", // Smooth transitions
       }}
       key={sprite}
-      className={`absolute border ${
-        selectedSprite === sprite ? "border-blue-400 shadow-md p-1" : "border-transparent"
+      className={`absolute border p-1 py-2 rounded-md ${
+        selectedSprite === sprite && highLightSelectedSprite ? "border-yellow-400 bg-yellow-100" : "border-transparent"
       }`}
     >
       {children}

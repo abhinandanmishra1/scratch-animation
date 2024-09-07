@@ -143,6 +143,18 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
             x: current.x - Number(payload?.steps || "10"),
           }));
           break;
+        case Actions.MoveYStepsDownward:
+          setCurrentPosition((current) => ({
+            ...current,
+            y: current.y + Number(payload?.steps || "10"),
+          }));
+          break;
+        case Actions.MoveYStepsUpward:
+          setCurrentPosition((current) => ({
+            ...current,
+            y: current.y - Number(payload?.steps || "10"),
+          }));
+          break;
         case Actions.TurnXDegreesClockwise:
           setCurrentPosition((current) => ({
             ...current,
@@ -166,12 +178,12 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
           const times = Number(payload?.times || "1");
           const waitFor = (ms: number) => {
             return new Promise((resolve) => setTimeout(resolve, ms));
-          }
+          };
           for (let count = 0; count < times; count++) {
             for (const action of animations) {
               await waitFor(200);
-              if(!isPlaying) return;
-              if(action.type === Actions.RepeatXTimes) break;
+              if (!isPlaying) return;
+              if (action.type === Actions.RepeatXTimes) break;
               await executeAnimation(action);
             }
           }
@@ -194,13 +206,7 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
         }
       }
     },
-    [
-      animations,
-      setCurrentPosition,
-      isPlaying,
-      dispatch,
-      sprite,
-    ]
+    [animations, setCurrentPosition, isPlaying, dispatch, sprite]
   );
 
   return {

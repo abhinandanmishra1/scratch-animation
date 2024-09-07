@@ -42,6 +42,12 @@ export function Sidebar() {
       <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsBackward)} type="action">
         Move X steps backward
       </DraggableItem>
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveYStepsDownward)} type="action">
+        Move Y steps downward
+      </DraggableItem>
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveYStepsUpward)} type="action">
+        Move Y steps upward
+      </DraggableItem>
       <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesClockwise)} type="action">
         Turn X degrees clockwise
       </DraggableItem>

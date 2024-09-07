@@ -21,7 +21,9 @@ const ActionType = ({ action, itemIndex, spriteName }: ActionTypeProps) => {
     const payload: Record<string, string | number> = {};
     if (
       type === Actions.MoveXStepsForward ||
-      type === Actions.MoveXStepsBackward
+      type === Actions.MoveXStepsBackward ||
+      type === Actions.MoveYStepsDownward ||
+      type === Actions.MoveYStepsUpward
     ) {
       payload.steps = action.payload?.steps || 1;
     }
@@ -78,7 +80,9 @@ const ActionType = ({ action, itemIndex, spriteName }: ActionTypeProps) => {
 
   if (
     type === Actions.MoveXStepsForward ||
-    type === Actions.MoveXStepsBackward
+    type === Actions.MoveXStepsBackward || 
+    type === Actions.MoveYStepsDownward ||
+    type === Actions.MoveYStepsUpward
   ) {
     return (
       <div className="flex gap-2 items-center bg-blue-500 p-2 rounded-t-md">
@@ -96,8 +100,19 @@ const ActionType = ({ action, itemIndex, spriteName }: ActionTypeProps) => {
         />{" "}
         steps{" "}
         {type === Actions.MoveXStepsForward
-          ? "in right direction"
-          : "in left direction"}
+          && "in right direction"}
+        {
+          type === Actions.MoveXStepsBackward
+            && "in left direction"
+        }
+        {
+          type === Actions.MoveYStepsDownward
+            && "in down direction"
+        }
+        {
+          type === Actions.MoveYStepsUpward
+            && "in up direction"
+        }
       </div>
     );
   }
