@@ -21,10 +21,10 @@ export function PreviewArea() {
   const effectiveEvents = useAppSelector((state) => state.global.effectiveEvents);
 
   useEffect(() => {
-    if (ref.current) {
+    if (ref && ref.current !== null) {
       dispatch(setSpritePosition({ spriteName: "sprite-1", position: getRandomPositionForNewSprite(ref.current.getBoundingClientRect()) }));
     }
-  }, [ref, dispatch]);
+  }, [ref.current, dispatch]);
 
   const [draggedSprite, setDraggedSprite] = useState("");
 
