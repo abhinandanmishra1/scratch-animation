@@ -1,4 +1,5 @@
 # Scratch Application
+[Visit Deployed Application](https://scratch-animation.vercel.app/)
 
 A Scratch-inspired application built with React, Vite, TypeScript, and Tailwind CSS. This project replicates the popular Scratch environment, allowing users to create animations, manage multiple sprites, and introduce dynamic interactions between characters.
 
