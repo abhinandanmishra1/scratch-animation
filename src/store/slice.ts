@@ -1,8 +1,7 @@
-import { Actions, Events } from "@app/constants";
 import { GlobalState, Item, SpritePositionType } from "@app/types";
-// src/slices/globalSlice.ts
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
+import { Events } from "@app/constants";
 import { createRef } from "react";
 
 const initialState: GlobalState = {
@@ -148,7 +147,7 @@ const globalSlice = createSlice({
     },
     addItem(state, action: PayloadAction<{ spriteName: string; item: Item }>) {
       const { spriteName, item } = action.payload;
-      const { type, payload } = item;
+      const { type } = item;
       if (
         !state.spriteItemList[spriteName] ||
         state.spriteItemList[spriteName].length === 0

@@ -2,6 +2,7 @@ import { useAnimations2, useAppDispatch, useAppSelector } from "@app/hooks";
 import { useCallback, useEffect } from "react";
 
 import { setSpritePosition } from "@app/store";
+import { waitFor } from "@app/utils";
 
 interface AnimateWrapperProps {
   children: React.ReactNode;
@@ -37,7 +38,6 @@ export const AnimateWrapper = ({
   });
 
   const playAnimations = useCallback(async () => {
-    const waitFor = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     for (const animation of animations) {
       if (!isPlaying) return;
       await executeAnimation(animation);

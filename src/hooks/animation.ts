@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@app/hooks";
 import { useCallback, useEffect, useState } from "react";
 
 import { Item } from "@app/types";
+import { waitFor } from "@app/utils";
 
 interface UseAnimationsProps {
   sprite: string;
@@ -175,11 +176,7 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
           }));
           break;
         case Actions.RepeatXTimes:
-          const times = Number(payload?.times || "1");
-          const waitFor = (ms: number) => {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-          };
-          for (let count = 0; count < times; count++) {
+          for (let count = 0; count < Number(payload?.times || "1"); count++) {
             for (const action of animations) {
               await waitFor(200);
               if (!isPlaying) return;
