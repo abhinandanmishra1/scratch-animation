@@ -3,19 +3,20 @@ import { Actions, Events } from "@app/constants";
 import { DragEvent } from "react";
 import { DraggableItem } from "@app/blocks";
 import { FlagIcon } from "@app/assets";
-import { useScratchStore } from "@app/store";
+import { removeItem } from "@app/store/slice";
+import { useAppDispatch } from "@app/hooks";
 
 export function Sidebar() {
-  const { removeItem } = useScratchStore(state => state);
-
+  const dispatch = useAppDispatch();
   const removeItemOnDrag = (e: DragEvent<HTMLDivElement>) => {
     const index = e.dataTransfer?.getData("index");
     const listName = e.dataTransfer?.getData("listName");
 
     if (!index || !listName) return;
 
-    removeItem(listName, Number(index));
+    dispatch(removeItem({ spriteName: listName, itemIndex: Number(index) }));
   };
+  
   return (
     <div
       onDrop={removeItemOnDrag}

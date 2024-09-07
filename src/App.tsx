@@ -1,6 +1,8 @@
-import { PreviewArea, Sidebar } from "./components";
-
-import { DragDropListView } from "./components/DragAndDrop";
+import {
+  DragDropListView,
+  PreviewArea,
+  Sidebar,
+} from "@app/components"
 
 export default function App() {
   return (
@@ -8,11 +10,9 @@ export default function App() {
       <div className="h-screen overflow-hidden flex flex-row  ">
         <div className="flex-1 h-screen overflow-hidden flex flex-row bg-white border-t border-r border-gray-200 rounded-tr-xl mr-2">
           <Sidebar /> 
-          {/* <MidArea /> */}
           <DragDropListView />
         </div>
-        <div className="w-1/3 h-screen overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-tl-xl ml-2">
-          {/* <PreviewArea2 /> */}
+        <div className="w-1/2 h-screen overflow-hidden flex flex-row bg-white border-t border-l border-gray-200 rounded-tl-xl ml-2">
           <PreviewArea />
         </div>
       </div>

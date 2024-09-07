@@ -1,9 +1,8 @@
-
 interface CatSpriteProps {
   spriteName: string;
   setSelectedSprite: (sprite: string) => void;
 }
-export function CatSprite({spriteName, setSelectedSprite}: CatSpriteProps) {
+export function CatSprite({ spriteName, setSelectedSprite }: CatSpriteProps) {
   return (
     <svg
       onClick={() => setSelectedSprite(spriteName)}
