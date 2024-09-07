@@ -1,30 +1,35 @@
-# React + TypeScript + Vite
+# Scratch Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Scratch-inspired application built with React, Vite, TypeScript, and Tailwind CSS. This project replicates the popular Scratch environment, allowing users to create animations, manage multiple sprites, and introduce dynamic interactions between characters.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Motion Animations**: 
+   - Drag-and-drop animations such as moving steps, turning degrees, and repeating animations.
+   - Supports various motion controls for precise sprite manipulation.
+   
+2. **Multiple Sprites Support**: 
+   - Create and manage multiple sprites within the playground.
+   - Apply animations to each sprite independently.
+   - Implement a global play button to animate all sprites simultaneously.
 
-## Expanding the ESLint configuration
+3. **Collision-Based Animation Swap (Hero Feature)**: 
+   - Swap animations dynamically when two sprites collide, adding an interactive element to the playground.
+   
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React** with **Vite**: Fast and modern React framework for web development.
+- **TypeScript**: Strongly typed programming language to improve code quality and maintainability.
+- **Tailwind CSS**: Utility-first CSS framework for styling.
+- **Zustand and Redux Toolkit**: State management libraries used for handling various application states efficiently.
 
-- Configure the top-level `parserOptions` property like this:
+## Implementations
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- [x] Implement drag-and-drop functionalities for animations.
+- [x] Create and support multiple sprites.
+- [x] Add Motion animations: Move steps, turn degrees, Goto x: y, Repeat animation.
+- [x] Implement a play button to start animations for all sprites.
+- [x] Implement collision-based animation swap (Hero Feature).
+- [x] Integrate Zustand and Redux Toolkit for state management.
+- [x] Style the application using Tailwind CSS.
+- [x] Configure the project with React, Vite, TypeScript, and Tailwind CSS.
