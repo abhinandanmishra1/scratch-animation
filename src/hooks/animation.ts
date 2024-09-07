@@ -109,7 +109,6 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
 
   const detectCollisions = useCallback(() => {
     const spriteA = sprite;
-
     for (const sprite of sprites) {
       if (sprite === spriteA) continue;
       const spriteB = sprite;
@@ -126,14 +125,11 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
     }
 
     return { spriteA, spriteB: null };
-  }, [sprite, currentPosition, spritesPositions]);
-
-  const [executedActions, setExecutedActions] = useState<Item[]>([]);
+  }, [sprites, spritesPositions, sprite]);
 
   const executeAnimation = useCallback(
     async (action: Item) => {
       const { type, payload } = action;
-      console.log("Executiong action of type ", type, "with payload", payload);
       switch (type) {
         case Actions.MoveXStepsForward:
           setCurrentPosition((current) => ({
@@ -168,42 +164,40 @@ export const useAnimations2 = ({ sprite, dragged }: UseAnimationsProps) => {
           break;
         case Actions.RepeatXTimes:
           const times = Number(payload?.times || "1");
+          const waitFor = (ms: number) => {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+          }
           for (let count = 0; count < times; count++) {
-            for (const executedAction of executedActions) {
-              if (!isPlaying) return;
-              executeAnimation(executedAction);
+            for (const action of animations) {
+              await waitFor(200);
+              if(!isPlaying) return;
+              if(action.type === Actions.RepeatXTimes) break;
+              await executeAnimation(action);
             }
           }
-          setExecutedActions([]);
           break;
         default:
           break;
       }
 
       if (type !== Actions.RepeatXTimes) {
-        setExecutedActions((executedActions) => [...executedActions, action]);
         try {
           const { spriteA, spriteB } = detectCollisions();
           if (spriteB) {
             dispatch(dispatchCollisionEvent({ spriteA, spriteB }));
-            return false;
           }
 
-          return false;
+          // return false;
         } catch (err) {
           console.error(err);
           alert("error happened");
         }
       }
-
-      return false;
     },
     [
       animations,
       setCurrentPosition,
       isPlaying,
-      executedActions,
-      setExecutedActions,
       dispatch,
       sprite,
     ]

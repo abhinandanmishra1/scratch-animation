@@ -36,22 +36,22 @@ export function Sidebar() {
         {"When this sprite clicked"}
       </DraggableItem>
       <div className="font-bold"> {"Motion"} </div>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsForward)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsForward)} type="action">
         Move X steps forward
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsBackward)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.MoveXStepsBackward)} type="action">
         Move X steps backward
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesClockwise)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesClockwise)} type="action">
         Turn X degrees clockwise
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesAntiClockwise)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.TurnXDegreesAntiClockwise)} type="action">
         Turn X degrees anti-clockwise
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.GotoXY)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.GotoXY)} type="action">
         Go to position X and Y
       </DraggableItem>
-      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.RepeatXTimes)} type="motion">
+      <DraggableItem onDragStart={(e) => e.dataTransfer.setData("type", Actions.RepeatXTimes)} type="action">
         {"Repeat"}
       </DraggableItem>
     </div>

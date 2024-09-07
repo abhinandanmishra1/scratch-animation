@@ -19,10 +19,6 @@ const DragDropList = () => {
     const payload = JSON.parse(e.dataTransfer?.getData("payload") || "{}");
     if (!type) return;
 
-    console.log({
-      type,
-      payload,
-    });
     dispatch(
       addItem({
         spriteName: selectedSprite,
@@ -41,7 +37,7 @@ const DragDropList = () => {
   };
 
   return (
-    <div className="w-2/3 mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
+    <div className="w-[80%] mx-auto mt-10 p-4 border rounded shadow-md bg-gray-100">
       {spriteItems.map((animation, index) => (
         <ActionTypeWrapper
           draggable={

@@ -19,7 +19,7 @@ export const AnimateWrapper = ({
   const dispatch = useAppDispatch();
   const selectedSprite = useAppSelector((state) => state.global.selectedSprite);
 
-  const { animations, currentPosition, executeAnimation, isPlaying, togglePlayingOnClick, completeEvent } = useAnimations2({
+  const { animations, currentPosition, executeAnimation, isPlaying, togglePlayingOnClick, completeEvent} = useAnimations2({
     sprite,
     dragged,
   });
@@ -27,12 +27,7 @@ export const AnimateWrapper = ({
   const playAnimations = useCallback(async () => {
     for (const animation of animations) {
       if (!isPlaying) return;
-      const collision = await executeAnimation(animation);
-
-      if (collision) {
-        dispatch(setSpritePosition({ spriteName: sprite, position: currentPosition }));
-        completeEvent();
-      }
+      await executeAnimation(animation);
     }
 
     dispatch(setSpritePosition({ spriteName: sprite, position: currentPosition }));

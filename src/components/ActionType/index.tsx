@@ -1,6 +1,7 @@
 import { Actions, Events } from "@app/constants";
 import { ChangeEvent, DragEvent, useEffect, useState } from "react";
 
+import { FlagIcon } from "@app/assets";
 import { Item } from "@app/types";
 import { updateItem } from "@app/store";
 import { useAppDispatch } from "@app/hooks";
@@ -12,11 +13,7 @@ interface ActionTypeProps {
   spriteName: string;
 }
 
-const ActionType = ({
-  action,
-  itemIndex,
-  spriteName,
-}: ActionTypeProps) => {
+const ActionType = ({ action, itemIndex, spriteName }: ActionTypeProps) => {
   const dispatch = useAppDispatch();
   const ref = useScratchStore((state) => state.ref);
 
@@ -84,14 +81,14 @@ const ActionType = ({
     type === Actions.MoveXStepsBackward
   ) {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center bg-blue-500 p-2 rounded-t-md">
         Move{" "}
         <input
           type="number"
-          className={`w-14 rounded  px-2 py-1 outline-none border-b text-sm ${
+          className={`w-14 rounded  px-2 py-1 outline-none text-sm ${
             steps <= 0
               ? "bg-red-200 text-red-800"
-              : "bg-green-200 text-green-800"
+              : "bg-gray-200 text-gray-800"
           }`}
           name="steps"
           value={payload.steps}
@@ -112,16 +109,16 @@ const ActionType = ({
     type === Actions.TurnXDegreesAntiClockwise
   ) {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center bg-blue-500 p-2 rounded-t-md">
         Turn{" "}
         <input
           type="number"
           className={`
-            w-14  rounded  px-2 py-1 outline-none border-b text-sm"
+            w-14  rounded  px-2 py-1 outline-none text-sm"
           name="degrees ${
             degrees <= 0
               ? "bg-red-200 text-red-800"
-              : "bg-green-200 text-green-800"
+              : "bg-gray-200 text-gray-800"
           }
             `}
           name="degrees"
@@ -141,13 +138,13 @@ const ActionType = ({
 
   if (type === Actions.GotoXY) {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center bg-blue-500 p-2 rounded-t-md">
         Go to position
         {" ("}
         <input
           type="number"
-          className={`w-14 rounded px-1.5 py-1 outline-none border-b text-sm ${
-            x < 0 ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"
+          className={`w-14 rounded px-1.5 py-1 outline-none text-sm ${
+            x < 0 ? "bg-red-200 text-red-800" : "bg-gray-200 text-gray-800"
           }`}
           name="x"
           value={payload.x}
@@ -156,8 +153,8 @@ const ActionType = ({
         ,{" "}
         <input
           type="number"
-          className={`w-14  rounded px-2 py-1.5 outline-none border-b text-sm ${
-            y < 0 ? "bg-red-200 text-red-800" : "bg-green-200 text-green-800"
+          className={`w-14  rounded px-2 py-1.5 outline-none text-sm ${
+            y < 0 ? "bg-red-200 text-red-800" : "bg-gray-200 text-gray-800"
           }`}
           name="y"
           value={payload.y}
@@ -172,16 +169,16 @@ const ActionType = ({
 
   if (type === Actions.RepeatXTimes) {
     return (
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center bg-blue-500 p-2 rounded-t-md">
         Repeat
         <input
           type="number"
           max={15}
           min={1}
-          className={`w-14 rounded  px-1.5 py-1 outline-none border-b text-sm ${
+          className={`w-14 rounded  px-1.5 py-1 outline-none text-sm ${
             times < 1 || times > 15
               ? "bg-red-200 text-red-800"
-              : "bg-green-200 text-green-800"
+              : "bg-gray-200 text-gray-800"
           }`}
           name="times"
           value={payload.times}
@@ -192,7 +189,16 @@ const ActionType = ({
     );
   }
 
-  return <div>{action.type}</div>;
+  return (
+    <div className="flex bg-yellow-500 p-2 rounded-t-md">
+      {action.type === Events.OnClick && "When this sprite is clicked"}
+      {action.type === Events.OnStart && (
+        <p className="flex gap-2 items-center">
+          When the <FlagIcon size={16} fill="green" /> is clicked
+        </p>
+      )}
+    </div>
+  );
 };
 
 interface ActionTypeWrapperProps {
@@ -213,7 +219,7 @@ export const ActionTypeWrapper = ({
     <div
       draggable={draggable}
       onDragStart={(e) => handleDragStart(e, itemIndex)}
-      className="p-2 border rounded shadow-md cursor-move"
+      className="border rounded shadow-md cursor-move text-white"
     >
       <ActionType
         itemIndex={itemIndex}
